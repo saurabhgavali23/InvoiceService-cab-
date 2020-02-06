@@ -131,11 +131,11 @@ public class InvoiceServiceTest {
             Mockito.doNothing().when(rideRepositoryMock).addRide(userId, ride1);
             InvoiceSummary expectedInvoiceSummary = new InvoiceSummary(2, 30, 15);
 
-            when(rideRepositoryMock.getRide("userId.com")).thenThrow(new NullPointerException("ID Not Available"));
+            when(rideRepositoryMock.getRide("userId.com")).thenThrow(new InvoiceServiceException("ID Not Available",InvoiceServiceException.ExceptionType.DATA_NOT_FOUND));
             InvoiceSummary invoiceSummary = invoiceServices.getInvoiceSummary("userId.com");
-            Assert.assertEquals(expectedInvoiceSummary, invoiceSummary);
 
         } catch (InvoiceServiceException e) {
+            Assert.assertEquals(InvoiceServiceException.ExceptionType.DATA_NOT_FOUND, e.exceptionType);
             //e.printStackTrace();
         }
     }
@@ -149,12 +149,13 @@ public class InvoiceServiceTest {
             Mockito.doNothing().when(rideRepositoryMock).addRide(null, null);
             InvoiceSummary expectedInvoiceSummary = new InvoiceSummary(2, 30, 15);
 
-            when(rideRepositoryMock.getRide(null)).thenThrow(new NullPointerException("Value Is Null"));
+           // when(rideRepositoryMock.getRide(null)).thenThrow(new NullPointerException("value is null"));
+            when(rideRepositoryMock.getRide(null)).thenThrow(new InvoiceServiceException("Value Is Null",InvoiceServiceException.ExceptionType.DATA_NOT_FOUND));
             InvoiceSummary invoiceSummary = invoiceServices.getInvoiceSummary(null);
-            Assert.assertEquals(expectedInvoiceSummary, invoiceSummary);
 
         } catch (InvoiceServiceException e) {
-            e.printStackTrace();
+            Assert.assertEquals(InvoiceServiceException.ExceptionType.DATA_NOT_FOUND, e.exceptionType);
+            //e.printStackTrace();
         }
     }
 }
